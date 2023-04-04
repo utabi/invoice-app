@@ -19,7 +19,7 @@ Invoice Appは、案件やクライアントへの見積書・請求書を作成
 1. Clone the repository.
 
 ```
-git clone https://github.com/yourusername/invoice-app.git
+git clone https://github.com/utabi/invoice-app
 ```
 
 2. Install dependencies.
