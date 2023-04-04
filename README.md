@@ -4,6 +4,8 @@ Invoice App is a simple web application for creating, editing, and managing quot
 
 Invoice Appは、案件やクライアントへの見積書・請求書を作成、編集、管理するためのシンプルなウェブアプリケーションです。ローカルでのみ動作します。
 
+![top page](images/screenshot1.png "top page")
+
 ## Features
 
 - Create, edit, and delete invoice projects
