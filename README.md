@@ -39,10 +39,10 @@ npm start
 The application will be accessible at http://localhost:3000.
 
 ## Tips
-- 振込先は /src/pdf/_account.ejs を編集
-- 会社（事業主）の情報は /src/public/company_sign.png を自分で作成 
-（または/src/pdf/_company.ejs を編集）
-- 請求書のデザインは /src/pdf/_pdf.css を編集
+- 振込先は [/src/pdf/_account.ejs](/src/pdf/_account.ejs) を編集
+- 会社（事業主）の情報は [/src/public/company_sign.png](/src/public/company_sign.png) を自分で作成 
+（または[/src/pdf/_company.ejs](/src/pdf/_company.ejs) を編集）
+- 請求書のデザインは [/src/pdf/_pdf.css](/src/pdf/_pdf.css) を編集
 
 ## Technologies
 
