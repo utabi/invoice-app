@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Projects</title>
+  <link
+    rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+  >
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <style>
+    header .summary { font-size: 1.2em; }
+    .container { max-width: 100%; }
+    table th { font-size: 12px; } 
+    table td { vertical-align: middle !important; }
+    .billed { background-color: #cafcff; }
+    .deposited { background-color: #cae3ff; }
+  </style>
+</head>
+<body>
+  <div class="container mt-4">
+    <header class="d-flex flex-row justify-content-between mb-4">
+      <h1><%= labels.projects %></h1>
+      <div class="summary">
+        <div>全案件合計 (税込): ¥ <%= grand_total.toLocaleString() %>-</div>
+        <div>入金済合計 (税込): ¥ <%= grand_total_completed.toLocaleString() %>-</div>
+      </div>
+    </header>
+    
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <td><%= labels.id %></td>
+          <td><%= labels.client_name %></td>
+          <th><%= labels.project_name %></th>
+          <th><%= labels.estimate_date %></th>
+          <th><%= labels.invoice_date %></th>
+          <th><%= labels.is_completed %></th>
+          <th><%= labels.is_canceled %></th>
+          <th><%= labels.total_amount_with_tax %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% projects.forEach(project => { %>
+          <tr>
+            <td><%= project.id %></td>
+            <td><%= project.client_name %></td>
+            <td><%= project.project_name %></td>
+            <td><%= formatDate(project.estimate_date) %></td>
+            <td class="<%= project.invoice_date ? 'billed':'' %>"><%= project.invoice_date ? formatDate(project.invoice_date) : '未請求' %></td>
+            <td class="text-center <%= project.is_completed ? 'deposited' : '' %>"><%= project.is_completed ? '済' : '' %></td>
+            <td class="text-center"><%= project.is_canceled ? 'キャンセル' : '' %></td>
+            <td>¥ <%= project.total_amount_with_tax.toLocaleString() %>-</td>
+            <td>
+              <a href="/edit/<%= project.id %>" class="btn btn-outline-primary mb-1"><%= labels.edit %></a>
+              <a href="/clone/<%= project.id %>" class="btn btn-secondary mb-1"><%= labels.clone %></a><br/>
+              <a href="/estimate-pdf/<%= project.id %>" target="_blank" class="btn btn-warning"><%= labels.estimate %></a>
+              <a href="/invoice-pdf/<%= project.id %>" target="_blank" class="btn btn-primary"><%= labels.invoice %></a>
+              
+
+            </td>
+          </tr>
+        <% }); %>
+        
+        
+      </tbody>
+    </table>
+    <a href="/new" class="btn btn-secondary"><%= labels.create_new %></a>
+  </div>
+</body>
+</html>

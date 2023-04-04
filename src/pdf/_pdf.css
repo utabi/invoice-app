@@ -1,0 +1,67 @@
+body {
+  font-family:"Yu Gothic", "游ゴシック", YuGothic, "游ゴシック体", "ヒラギノ角ゴ Pro W3", "メイリオ", sans-serif;
+  margin: 10vw; color: #000;
+}
+
+  .container {
+    width: 100%;
+    margin: 0 auto;
+  }
+  .header {
+    position: relative;
+    margin-bottom: 20px;
+  }
+  .header .title {
+    display: block; 
+    width: 100%;
+    text-align: center; 
+    font-size: 24px;
+    font-weight: normal;
+  }
+  .header .top-right {
+    font-size: 14px; position: absolute; right:0; top:0; 
+  }
+  .client-info {
+    margin-bottom: 20px;
+  }
+  .client-info .client-name {
+    font-size: 18px;
+    font-weight: normal;
+    margin-bottom: 5px;
+  }
+  .client-info p { font-size:10px; }
+  .client-info .price { font-size: 20px; }
+
+  #company_logo { position: absolute; right:10vw; top: 20vw; }
+  
+  
+  table {
+    width: 100%; font-size: 11px; 
+    border-collapse: collapse;
+  }
+  th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+  }
+  th {
+    
+  }
+  th.name { width: 75%; }
+  .total-row {
+    font-weight: bold;
+  }
+  .note {
+    border: 1px solid #aaa; padding: 1em; margin: 1em 0; font-size: 11px; 
+  }
+  .account {
+    border: 1px solid #aaa; padding: 1em; font-size: 11px; display: flex; justify-content: flex-start;
+  }
+  .account .left {
+    border-right: 1px solid #aaa; padding-right: 1em; 
+  }
+  .account .right {
+    padding-left: 1em; 
+  }
+  .nowrap { white-space:nowrap; }
+  .sosumi { float: right; }

@@ -1,0 +1,85 @@
+  <div class="row">
+    <div class="form-group col-8">
+      <label for="client_name"><%= labels.client_name %></label>
+      <input type="text" class="form-control" name="client_name" id="client_name" value="<%= project ? project.client_name : '' %>" required>
+    </div>
+    <div class="form-group col-4">
+      <label for="sama">敬称</label>
+      <div>
+        <input type="radio" id="sama1" name="sama" value="0" <%= project ? project.sama == 0 ? 'checked' : '' : 'checked' %>>
+        <label for="sama1">様</label>
+        <input type="radio" id="sama2" name="sama" value="1" <%= project ? project.sama == 1 ? 'checked' : '' : '' %>>
+        <label for="sama2">御中</label>
+      </div>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <label for="project_name"><%= labels.project_name %></label>
+    <input type="text" class="form-control" name="project_name" id="project_name" value="<%= project ? project.project_name : '' %>" required>
+  </div>
+  <div class="row">
+    <div class="form-group col">
+      <label for="estimate_date"><%= labels.estimate_date %></label>
+      <input type="date" class="form-control" name="estimate_date" id="estimate_date" value="<%= project ? project.estimate_date : new Date().toISOString().slice(0, 10) %>">
+    </div>
+    <div class="form-group col">
+      <label for="invoice_date"><%= labels.invoice_date %></label>
+      <input type="date" class="form-control" name="invoice_date" id="invoice_date" value="<%= project ? project.invoice_date : '' %>">
+    </div>
+    <div class="form-group col">
+      <label for="tax"><%= labels.tax_rate %></label>
+      <input type="number" class="form-control" name="tax" id="tax" value="<%= default_tax %>">
+    </div>
+  </div>
+  
+  <h3><%= labels.items %></h3>
+  <div class="form-group items-group">
+    <div class="row">
+      <div class="col col-4">
+        <%= labels.item_name %>
+      </div>
+      <div class="col col-2">
+        <%= labels.unit_price %>
+      </div>
+      <div class="col col-1">
+        <%= labels.hours %>
+      </div>
+      <div class="col col-1">
+        <%= labels.quantity %>
+      </div>
+      <div class="col col-1">
+        <%= labels.taxed %>
+      </div>
+      <div class="col col-2">
+        <%= labels.amount %>
+      </div>
+      <div class="col col-2">
+
+      </div>
+    </div>
+    <div id="items"></div>
+    <button type="button" class="btn btn-secondary" onclick="addItem()"><%= labels.add_item %></button>
+
+    <input type="hidden" class="form-control total_amount" name="total_amount" value="0" readonly>
+    <input type="hidden" class="form-control total_amount_with_tax" name="total_amount_with_tax" value="0" readonly>
+    <h3 id="total_amount"></h3>
+  </div>
+  
+
+  <div class="form-check">
+    <input type="checkbox" class="form-check-input" name="is_completed" id="is_completed" <% if (project && project.is_completed) { %>checked<% } %>>
+    <label class="form-check-label" for="is_completed"><%= labels.is_completed2 %></label>
+  </div>
+  <div class="form-check">
+    <input type="checkbox" class="form-check-input" name="is_canceled" id="is_canceled" <% if (project && project.is_canceled) { %>checked<% } %>>
+    <label class="form-check-label" for="is_canceled"><%= labels.is_canceled %></label>
+  </div>
+  <div class="form-group">
+    <label for="notes">備考</label>
+    <textarea class="form-control" id="notes" name="notes" rows="3"><%= project ? project.notes : '' %></textarea>
+  </div>
+  
+  <div class="text-center m-2">
+    <button type="submit" class="btn btn-primary"><%= labels.save %></button>
+  </div>

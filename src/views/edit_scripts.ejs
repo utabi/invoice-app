@@ -1,0 +1,145 @@
+<script>
+<% 
+  let max_id = 0;
+  if(items){
+    items.forEach(item => { 
+      max_id = Math.max(max_id, item.id);
+    });
+
+  }
+%>;
+let itemCount = 0;
+        
+function updateAmount(inputElement) {
+  const itemDiv = inputElement.closest('div.row');
+  const unitPriceInput = itemDiv.querySelector('input.unit_price');
+  const hoursInput = itemDiv.querySelector('input.hours');
+  const quantityInput = itemDiv.querySelector('input.quantity');
+  const amountSpan = itemDiv.querySelector('.amount');
+  const unitPrice = parseFloat(unitPriceInput.value) || 0;
+  const hours = parseFloat(hoursInput.value) || 0;
+  const quantity = parseFloat(quantityInput.value) || 0;
+
+  const amount = unitPrice * hours * quantity;
+  amountSpan.textContent = amount.toLocaleString();
+
+  updateAmountTotal()
+}
+function updateAmountTotal(){
+  const items = document.querySelectorAll(".project-item");
+  let total_amount_input = document.querySelector("input.total_amount");
+  let total_amount_input_with_tax = document.querySelector("input.total_amount_with_tax");
+  let total_amount_div = document.getElementById("total_amount");
+  let total_amount = 0;
+  let total_amount_with_tax = 0;
+  items.forEach(item => {
+
+    amount = parseInt( item.querySelector(".amount").innerText.replace(/,/g, '') );
+    taxed = item.querySelector("#taxed").checked;
+    
+    tax_rate = parseFloat( document.getElementById("tax").value );
+
+    total_amount += amount
+    if(taxed){
+      total_amount_with_tax += amount * (1+tax_rate)
+    } else {
+      total_amount_with_tax += amount
+    }
+  })
+
+  //total_amount_input のvalueを更新
+  total_amount_div.innerHTML = '合計金額 : ¥ '+total_amount.toLocaleString()+ "- 　/　税込 : ¥ "+(total_amount_with_tax).toLocaleString()+"-";
+  total_amount_input.value = total_amount;
+  total_amount_input_with_tax.value = total_amount_with_tax;
+  
+}
+
+function addItem(item) {
+  const itemsDiv = document.getElementById("items");
+  const newItem = document.createElement("div");
+  newItem.classList.add("row");
+  newItem.classList.add("project-item");
+  newItem.classList.add("mb-1");
+  newItem.dataset.itemId = itemCount;
+  newItem.setAttribute('draggable', 'true');
+  newItem.innerHTML = `
+    
+      <div class="col col-4">
+        <input type="text" class="form-control item_name" name="items[${itemCount}][item_name]" value="${item && item.item_name ? item.item_name : ''}" required>
+      </div>
+      <div class="col col-2">
+        <input type="number" class="form-control unit_price" name="items[${itemCount}][unit_price]" value="${item && item.unit_price ? item.unit_price : 5000}" oninput="updateAmount(this)" required>
+      </div>
+      <div class="col col-1">
+        <input type="number" class="form-control hours" name="items[${itemCount}][hours]" value="${item && item.hours ? item.hours : 1}" oninput="updateAmount(this)"  required>
+      </div>
+      <div class="col col-1">
+        <input type="number" class="form-control quantity" name="items[${itemCount}][quantity]" value="${item && item.quantity ? item.quantity : 1}" oninput="updateAmount(this)"  required>
+      </div>
+      <div class="col col-1">
+        <input type="checkbox" class="form-check-input" id="taxed" name="items[${itemCount}][taxed]" ${item ? item.taxed==1 ? 'checked=true' : '' : 'checked=true' } oninput="updateAmount(this)"  >
+      </div>
+      <div class="col col-2">
+        ¥ <span class="amount">-</span>
+      </div>
+      <div class="col col-1">
+        <button type="button" class="form-control" onclick="removeItem(this)">✗</button>
+        <input type="hidden" class="sort-index" name="items[${itemCount}][item_sort_index]" value="${itemCount}">
+      </div>
+    
+  `;
+  
+
+  itemsDiv.appendChild(newItem);
+  updateAmount(newItem.querySelector('input.unit_price'));
+
+  itemCount++;
+}
+
+
+function removeItem(button) {
+  const itemDiv = button.closest('div.row');
+  itemDiv.remove();
+}
+
+  const table = document.getElementById('items');
+  let draggedItem = null;
+
+  table.addEventListener('dragstart', (e) => {
+    draggedItem = e.target.closest('div.row');
+    e.dataTransfer.setData('text/plain', draggedItem.dataset.itemId);
+  });
+
+  table.addEventListener('dragover', (e) => {
+    e.preventDefault();
+  });
+
+  table.addEventListener('drop', (e) => {
+    e.preventDefault();
+    
+    const droppedItemId = e.dataTransfer.getData('text/plain');
+    const targetRow = e.target.closest('div.row');
+    
+    if (draggedItem.dataset.itemId !== droppedItemId || !targetRow) return;
+
+    //順番をいれかえる
+    const draggedItemIndex = Array.from(table.children).indexOf(draggedItem);
+    const targetRowIndex = Array.from(table.children).indexOf(targetRow);
+    if (draggedItemIndex < targetRowIndex) {
+      table.insertBefore(draggedItem, targetRow.nextSibling);
+    } else {
+      table.insertBefore(draggedItem, targetRow);
+    }
+
+    let items = table.querySelectorAll('.row');
+    let sort_index = 0;
+    items.forEach((item, index) => {
+      let sort_index_input = item.querySelector('.sort-index')
+      sort_index_input.value = sort_index;
+      sort_index ++;
+    });
+    // const tempHTML = draggedItem.innerHTML;
+    // draggedItem.innerHTML = targetRow.innerHTML;
+    // targetRow.innerHTML = tempHTML;
+  });
+</script>
