@@ -25,14 +25,13 @@ git clone https://github.com/utabi/invoice-app
 2. Install dependencies.
 
 ```
-cd invoice-app
+cd invoice-app/src
 npm install
 ```
 
 3. Run the application.
 
 ```
-cd src
 npm start
 ```
 
