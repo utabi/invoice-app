@@ -6,15 +6,15 @@ Invoice Appは、案件やクライアントへの見積書・請求書を作成
 
 ![top page](images/screenshot1.png "top page")
 
-## Features
+## 機能
 
-- Create, edit, and delete invoice projects
-- Add, edit, and delete items
-- Export invoices as PDF files
-- Manage project status (completed, canceled)
-- Change the order of items with drag & drop
+- プロジェクトの作成、編集、削除
+- 項目の追加、編集、削除
+- 見積書と請求書をPDFファイルで出力
+- プロジェクトの状態（入金確認、キャンセル）を管理
+- ドラッグ&ドロップで項目の順序を変更
 
-## Installation
+## インストール
 
 1. Clone the repository.
 
@@ -37,13 +37,13 @@ npm start
 
 The application will be accessible at http://localhost:3000.
 
-## Tips
+## カスタマイズ
 - 振込先は [/src/pdf/_account.ejs](/src/pdf/_account.ejs) を編集
 - 会社（事業主）の情報は [/src/public/company_sign.png](/src/public/company_sign.png) を自分で作成 
 （または[/src/pdf/_company.ejs](/src/pdf/_company.ejs) を編集）
 - 請求書のデザインは [/src/pdf/_pdf.css](/src/pdf/_pdf.css) を編集
 
-## Technologies
+## テクノロジー
 
 - Node.js
 - Express
@@ -51,7 +51,7 @@ The application will be accessible at http://localhost:3000.
 - EJS
 - Puppeteer
 
-## License
+## ライセンス
 
 [MIT License](LICENSE)
 
