@@ -14,9 +14,9 @@ Invoice App is a simple web application for creating, editing, and managing invo
 
 1. Clone the repository.
 
-\```
+```
 git clone https://github.com/yourusername/invoice-app.git
-\```
+```
 
 2. Install dependencies.
 
