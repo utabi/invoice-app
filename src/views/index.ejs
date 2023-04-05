@@ -57,9 +57,14 @@
             <td>
               <a href="/edit/<%= project.id %>" class="btn btn-outline-primary mb-1"><%= labels.edit %></a>
               <a href="/clone/<%= project.id %>" class="btn btn-secondary mb-1"><%= labels.clone %></a><br/>
-              <a href="/estimate-pdf/<%= project.id %>" target="_blank" class="btn btn-warning"><%= labels.estimate %></a>
-              <a href="/invoice-pdf/<%= project.id %>" target="_blank" class="btn btn-primary"><%= labels.invoice %></a>
+              <button type="button" class="btn btn-primary" onclick="window.open('/estimate-pdf/<%= project.id %>')" <%= project.estimate_date ? '' : 'disabled' %>><%= labels.estimate %></button>
+              <button type="button" class="btn btn-primary" onclick="window.open('/invoice-pdf/<%= project.id %>')" <%= project.invoice_date ? '' : 'disabled' %>><%= labels.invoice %></button>
               
+
+              
+              
+
+
 
             </td>
           </tr>
