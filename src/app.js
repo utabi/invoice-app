@@ -161,8 +161,8 @@ app.post('/edit/:id', (req, res) => {
         
         //itemsをsort_indexでソート
         items.sort(function(a, b) {
-          if (a.item_sort_index < b.item_sort_index) return -1;
-          if (a.item_sort_index > b.item_sort_index) return 1;
+          if (parseInt(a.item_sort_index) < parseInt(b.item_sort_index)) return -1;
+          if (parseInt(a.item_sort_index) > parseInt(b.item_sort_index)) return 1;
           return 0;
         });
 
