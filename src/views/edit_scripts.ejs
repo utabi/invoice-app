@@ -71,7 +71,7 @@ function addItem(item) {
         <input type="number" class="form-control unit_price" name="items[${itemCount}][unit_price]" value="${item && item.unit_price ? item.unit_price : 5000}" oninput="updateAmount(this)" required>
       </div>
       <div class="col col-1">
-        <input type="number" class="form-control hours" name="items[${itemCount}][hours]" value="${item && item.hours ? item.hours : 1}" oninput="updateAmount(this)"  required>
+        <input type="number" class="form-control hours" step="0.1" name="items[${itemCount}][hours]" value="${item && item.hours ? item.hours : 1}" oninput="updateAmount(this)"  required>
       </div>
       <div class="col col-1">
         <input type="number" class="form-control quantity" name="items[${itemCount}][quantity]" value="${item && item.quantity ? item.quantity : 1}" oninput="updateAmount(this)"  required>
