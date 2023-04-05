@@ -29,7 +29,7 @@
     </div>
     <div class="form-group col">
       <label for="tax"><%= labels.tax_rate %></label>
-      <input type="number" class="form-control" name="tax" id="tax" value="<%= default_tax %>">
+      <input type="number" class="form-control" name="tax" id="tax" value="<%= project ? project.tax : default_tax %>">
     </div>
   </div>
   

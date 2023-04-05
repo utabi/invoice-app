@@ -35,7 +35,7 @@
         </tr>
       </thead>
       <tbody>
-        <% let has_sosumi_1 = false %>
+        <% let has_sosumi_1 = false; let subtotal=0; let tax_subtotal=0; %>
         <% items.forEach(item => { %>
           <% (item.taxed == 0) ? has_sosumi_1 = true : null %>
           <tr>
@@ -44,29 +44,30 @@
             <td class="nowrap"><%= item.quantity %></td>
             <td class="nowrap">¥ <%= (item.unit_price * item.hours * item.quantity).toLocaleString() %>-</td>
           </tr>
+          <% 
+            if(item.taxed == 1){ tax_subtotal += (item.unit_price * item.hours * item.quantity) * (project.tax) } 
+            subtotal += (item.unit_price * item.hours * item.quantity)
+          %>
         <% }); %>
-        <%
-          const subtotal = items.reduce((sum, item) => sum + (item.unit_price * item.hours * item.quantity), 0)
-          let subtotal_tax = Math.round(subtotal * 0.1)
-        %>
+        
         <tr class="total-row">
           <td colspan="3"><%= labels.sub_total_amount %></td>
           <td>¥ <%= subtotal.toLocaleString() %>-</td>
         </tr>
         <tr class="total-row">
           <td colspan="3"><%= labels.tax %></td>
-          <td>¥ <%= subtotal_tax.toLocaleString() %>-</td>
+          <td>¥ <%= tax_subtotal.toLocaleString() %>-</td>
         </tr>
         <tr class="total-row">
           <td colspan="3">請求合計金額</td>
-          <td class="nowrap">¥ <%= (subtotal + subtotal_tax).toLocaleString() %>-</td>
+          <td class="nowrap">¥ <%= (subtotal + tax_subtotal).toLocaleString() %>-</td>
         </tr>
       </tbody>
     </table>
     <div class="note">
       備考:<br/>
-      <%= project.notes %>
-      <%- has_sosumi_1 ? '<br/><br/>※1 : この項目は消費税の計算に含まれません。' : ''  %>
+      <pre><%- project.notes %></pre>
+      <%- has_sosumi_1 ? '<br/>※1 : この項目は消費税の計算に含まれません。' : ''  %>
     </div>
     <%- include( '_account.ejs' ); %>
   </div>
