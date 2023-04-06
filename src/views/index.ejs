@@ -11,24 +11,27 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <style>
-    header .summary { font-size: 1.2em; }
+    header .summary { font-size: 1.2em; display:flex; }
+    header .summary div { margin-left: 1em; }
     .container { max-width: 100%; }
     table th { font-size: 12px; } 
     table td { vertical-align: middle !important; }
     .billed { background-color: #cafcff; }
     .deposited { background-color: #cae3ff; }
+    .nowrap { white-space: nowrap; }
   </style>
 </head>
 <body>
   <div class="container mt-4">
     <header class="d-flex flex-row justify-content-between mb-4">
-      <h1><%= labels.projects %></h1>
+      <h1 class="nowrap"><%= labels.projects %></h1>
       <div class="summary">
-        <div>全案件合計 (税込): ¥ <%= grand_total.toLocaleString() %>-</div>
-        <div>入金済合計 (税込): ¥ <%= grand_total_completed.toLocaleString() %>-</div>
+        <div>全合計 (税込): ¥<%= prices.grand_total.toLocaleString() %>-</div>
+        <div>請求済み合計 (税込): ¥<%= prices.grand_total_invoiced.toLocaleString() %>-</div>
+        <div>入金済み合計 (税込): ¥<%= prices.grand_total_completed.toLocaleString() %>-</div>
       </div>
     </header>
-    
+  
     <table class="table table-striped">
       <thead>
         <tr>
@@ -59,13 +62,6 @@
               <a href="/clone/<%= project.id %>" class="btn btn-secondary mb-1"><%= labels.clone %></a><br/>
               <button type="button" class="btn btn-primary" onclick="window.open('/estimate-pdf/<%= project.id %>')" <%= project.estimate_date ? '' : 'disabled' %>><%= labels.estimate %></button>
               <button type="button" class="btn btn-primary" onclick="window.open('/invoice-pdf/<%= project.id %>')" <%= project.invoice_date ? '' : 'disabled' %>><%= labels.invoice %></button>
-              
-
-              
-              
-
-
-
             </td>
           </tr>
         <% }); %>

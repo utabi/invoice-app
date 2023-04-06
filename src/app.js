@@ -77,20 +77,26 @@ app.get('/', (req, res) => {
       return console.error(err.message);
     }
   
-    let grand_total = 0;
-    let grand_total_completed = 0;
+    let prices = {
+      grand_total: 0,
+      grand_total_completed: 0,
+      grand_total_invoiced: 0,
+    }
     projects.forEach(project => {
       // console.log(project)
       if(!project.is_canceled){
-        grand_total += project.total_amount_with_tax;
+        prices.grand_total += project.total_amount_with_tax;
         if(project.is_completed){
-          grand_total_completed += project.total_amount_with_tax;
+          prices.grand_total_completed += project.total_amount_with_tax;
+        }
+        if(project.invoice_date){
+          prices.grand_total_invoiced += project.total_amount_with_tax;
         }
       }
     })
     
     // 合計金額を含むプロジェクトとプロジェクト全体の合計金額をレンダリング
-    res.render("index", { projects: projects, default_tax:default_tax, grand_total: grand_total, grand_total_completed: grand_total_completed, formatDate: formatDate });
+    res.render("index", { projects: projects, default_tax:default_tax, prices: prices, formatDate: formatDate });
   });
 });
 
@@ -108,15 +114,17 @@ app.post('/new', (req, res) => {
     }
 
     const projectId = this.lastID;
-
-    items.forEach(item => {
-      const taxed = item.taxed ? 1 : 0;
-      db.run("INSERT INTO items (project_id, item_name, unit_price, hours, quantity, taxed) VALUES (?, ?, ?, ?, ?, ?)", [projectId, item.item_name, item.unit_price, item.hours, item.quantity, taxed], function (err) {
-        if (err) {
-          return console.error(err.message);
-        }
+    if(items){
+      items.forEach(item => {
+        const taxed = item.taxed ? 1 : 0;
+        db.run("INSERT INTO items (project_id, item_name, unit_price, hours, quantity, taxed) VALUES (?, ?, ?, ?, ?, ?)", [projectId, item.item_name, item.unit_price, item.hours, item.quantity, taxed], function (err) {
+          if (err) {
+            return console.error(err.message);
+          }
+        });
       });
-    });
+    }
+    
 
     res.redirect('/');
   });
