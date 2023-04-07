@@ -17,7 +17,7 @@ Invoice Appは、案件やクライアントへの見積書・請求書を作成
 ## 修正履歴
 
 - [2023.4.7] ページを閉じたら5秒後にサーバが自動終了しるように変更
-- [2023.4.7] 自動起動用 start.command追加
+- [2023.4.7] 自動起動用 start.command (Mac用) 追加
 
 ## インストール
 事前にgitとnodejsがインストールされている必要があります。
@@ -36,8 +36,12 @@ npm install
 ```
 
 3. Run the application.
-
+if you use Mac,
 click the file named 'start.command'
+or
+```
+npm run start
+```
 The application will be accessible at http://localhost:3000.
 
 ## カスタマイズ
