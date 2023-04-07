@@ -5,10 +5,15 @@ const path = require('path');
 const fs = require('fs');
 const ejs = require('ejs');
 const puppeteer = require('puppeteer');
+const open = require('opn');
 
 const app = express();
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
+
 const port = 3000;
 const default_tax = 0.1;
+
 
 // DB connection
 const db = new sqlite3.Database('./database.sqlite3', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
@@ -334,7 +339,27 @@ app.get('/invoice-pdf/:id', (req, res) => {
   
 });
 
+let quit_timer;
 
-app.listen(port, () => {
-  console.log('Server is running at http://localhost:${port}');
+io.on('connection', (socket) => {
+  
+  clearTimeout(quit_timer)
+  
+  socket.on('disconnect', () => {
+    quit_timer = setTimeout(() => {
+      process.exit(0); // ユーザーが切断されたら、プロセスを終了
+      console.log('user disconnected');
+    
+    }, 5000);
+  });
+
+  
+});
+
+server.listen(port, () => {
+  console.log(`Server is running at http://localhost:${port}`);
+  console.log('Connected to the database.');
+
+  // ブラウザでlocalhostを開く
+  open(`http://localhost:${port}`);
 });
