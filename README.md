@@ -37,11 +37,7 @@ npm install
 
 3. Run the application.
 
-```
-cd ../
-```
 click the file named 'start.command'
-
 The application will be accessible at http://localhost:3000.
 
 ## カスタマイズ
