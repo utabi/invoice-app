@@ -1,5 +1,8 @@
-#!/bin/bash
+#!/bin/sh
+echo 'PARAM:' $0
+RELATIVE_DIR=`dirname "$0"`
+echo 'Dir:' $RELATIVE_DIR
 
-cd `dirname $0` # カレントディレクトリに移動
-cd src
+cd $RELATIVE_DIR/src
+
 npm run start
