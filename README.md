@@ -4,7 +4,7 @@ Invoice App is a simple web application for creating, editing, and managing quot
 
 Invoice Appは、案件やクライアントへの見積書・請求書を作成、編集、管理するためのシンプルなウェブアプリケーションです。ローカルでのみ動作します。本アプリはGPT-4の活用により作業を高速化し作成しました。日本で働く人用に最適化しています。
 
-![top page](images/screenshot1.png "top page")
+![top page](images/screenshot1.jpg "top page")
 
 ## 機能
 
