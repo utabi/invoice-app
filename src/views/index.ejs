@@ -15,7 +15,7 @@
     header .summary { font-size: 1.2em; display:flex; }
     header .summary div { margin-left: 1em; }
     .container { max-width: 100%; }
-    table th { font-size: 12px; } 
+    table th { font-size: 12px; white-space: nowrap; } 
     table td { vertical-align: middle !important; }
     .billed { background-color: #cafcff; }
     .deposited { background-color: #cae3ff; }
@@ -43,8 +43,8 @@
     <table class="table table-striped">
       <thead>
         <tr>
-          <td><%= labels.id %></td>
-          <td><%= labels.client_name %></td>
+          <th><%= labels.id %></td>
+          <th><%= labels.client_name %></td>
           <th><%= labels.project_name %></th>
           <th><%= labels.estimate_date %></th>
           <th><%= labels.invoice_date %></th>
@@ -64,10 +64,10 @@
             <td class="<%= project.invoice_date ? 'billed':'' %>"><%= project.invoice_date ? formatDate(project.invoice_date) : '未請求' %></td>
             <td class="text-center <%= project.is_completed ? 'deposited' : '' %>"><%= project.is_completed ? '済' : '' %></td>
             <td class="text-center"><%= project.is_canceled ? 'キャンセル' : '' %></td>
-            <td>¥ <%= project.total_amount_with_tax.toLocaleString() %>-</td>
-            <td>
+            <td>¥<%= project.total_amount_with_tax.toLocaleString() %>-</td>
+            <td class="nowrap">
               <a href="/edit/<%= project.id %>" class="btn btn-outline-primary mb-1"><%= labels.edit %></a>
-              <a href="/clone/<%= project.id %>" class="btn btn-secondary mb-1"><%= labels.clone %></a><br/>
+              <a href="/clone/<%= project.id %>" class="btn btn-secondary mb-1"><%= labels.clone %></a>
               <button type="button" class="btn btn-primary" onclick="window.open('/estimate-pdf/<%= project.id %>')" <%= project.estimate_date ? '' : 'disabled' %>><%= labels.estimate %></button>
               <button type="button" class="btn btn-primary" onclick="window.open('/invoice-pdf/<%= project.id %>')" <%= project.invoice_date ? '' : 'disabled' %>><%= labels.invoice %></button>
             </td>
