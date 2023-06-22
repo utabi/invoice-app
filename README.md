@@ -21,10 +21,15 @@ Invoice Appは、案件やクライアントへの見積書・請求書を作成
 - [2023.6.23] puppeteerが不安定なので、wkhtmltopdfに変更
 
 ## インストール
-事前にgitとnodejsがインストールされている必要があります。
+事前に
+- git
+- nodejs
+- wkhtmltopdf
+がインストールされている必要があります。
 
 0. Install wkhtmltopdf first :
 [https://wkhtmltopdf.org/downloads.html](https://wkhtmltopdf.org/downloads.html)
+And to install git and nodejs, please google them.
 
 1. Clone the repository.
 
