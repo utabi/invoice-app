@@ -282,7 +282,7 @@ app.get('/estimate-pdf/:id', (req, res) => {
 
       const browser = await puppeteer.launch();
       const page = await browser.newPage();
-
+      await page.setDefaultNavigationTimeout(0);
       const renderedHtml = await ejs.renderFile('pdf/estimate.ejs', { project: project, items: items, labels: labels, formatDate: formatDate  });
       await page.setContent(renderedHtml);
       await page.waitForSelector('img', { timeout: 0 }); // すべての画像が読み込まれるのを待つ
@@ -320,7 +320,7 @@ app.get('/invoice-pdf/:id', (req, res) => {
 
       const browser = await puppeteer.launch();
       const page = await browser.newPage();
-
+      await page.setDefaultNavigationTimeout(0);
       const renderedHtml = await ejs.renderFile('pdf/invoice.ejs', { project: project, items: items, labels: labels, formatDate: formatDate  });
       await page.setContent(renderedHtml);
       await page.waitForSelector('img', { timeout: 0 }); // すべての画像が読み込まれるのを待つ
