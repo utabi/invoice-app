@@ -16,11 +16,15 @@ Invoice Appは、案件やクライアントへの見積書・請求書を作成
 
 ## 修正履歴
 
-- [2023.4.7] ページを閉じたら5秒後にサーバが自動終了しるように変更
+- [2023.4.7] ページを閉じたら2分後にサーバが自動終了しるように変更
 - [2023.4.7] 自動起動用 start.command (Mac用) 追加
+- [2023.6.23] puppeteerが不安定なので、wkhtmltopdfに変更
 
 ## インストール
 事前にgitとnodejsがインストールされている必要があります。
+
+0. Install wkhtmltopdf first :
+[https://wkhtmltopdf.org/downloads.html](https://wkhtmltopdf.org/downloads.html)
 
 1. Clone the repository.
 
@@ -56,7 +60,7 @@ The application will be accessible at http://localhost:3000.
 - Express
 - SQLite
 - EJS
-- Puppeteer
+- wkhtmltopdf
 
 ## ライセンス
 
