@@ -20,38 +20,52 @@ Invoice Appは、案件やクライアントへの見積書・請求書を作成
 - [2023.4.7] 自動起動用 start.command (Mac用) 追加
 - [2023.6.23] puppeteerが不安定なので、wkhtmltopdfに変更
 
+## TODO
+
+- データのcsvエクスポート
+- 適格請求書発行事業者登録番号の表示
+- 年度ごとのソート、範囲指定
+
 ## インストール
 事前に
 - git
 - nodejs
 - wkhtmltopdf
-がインストールされている必要があります。
 
-0. Install wkhtmltopdf first :
+の３つがインストールされている必要があります。
+
+
+0. wkhtmltopdfのインストール :
 [https://wkhtmltopdf.org/downloads.html](https://wkhtmltopdf.org/downloads.html)
-And to install git and nodejs, please google them.
+gitとnodejsのインストールは省略します。
 
-1. Clone the repository.
+1. 好きなフォルダでリポジトリをクローンします。
 
 ```
 git clone https://github.com/utabi/invoice-app
 ```
 
-2. Install dependencies.
+2. 必要なモジュールをインストールします。
 
 ```
 cd invoice-app/src
 npm install
 ```
 
-3. Run the application.
-if you use Mac,
-click the file named 'start.command'
-or
+3. アプリを実行します。
+Macであれば、invoice-app/src/start.command
+を実行してください。
+または、
 ```
 npm run start
 ```
-The application will be accessible at http://localhost:3000.
+で起動します。自動的にブラウザにページが表示されます。http://localhost:3001
+
+4. 編集します。下記、注意点です。
+- 請求書は、請求日が未入力の場合、押せません。請求日を指定するとページ上部の「請求済み合計」に加算されます。
+- 入金確認したものは「入金確認」にチェックを入れてください。ページ上部の「入金済み合計」に加算されます。
+- 削除ボタンは編集画面の最下部にあります。
+
 
 ## カスタマイズ
 - 振込先は [/src/pdf/_account.ejs](/src/pdf/_account.ejs) を編集
