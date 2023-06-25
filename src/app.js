@@ -13,7 +13,7 @@ const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
-const port = 8080;
+const port = 8000;
 const default_tax = 0.1;
 
 
@@ -287,26 +287,21 @@ app.get('/estimate-pdf/:id', (req, res) => {
 
       // res.contentType("application/pdf");
       // wkhtmltopdf(renderedHtml, { pageSize: 'A4' }).pipe(res);
-
       // PUPPETEER
       const browser = await puppeteer.launch({
-        headless: 'new',
-        args: ["--proxy-server='direct://'", "--proxy-bypass-list=*"]
+        headless: false // false is needed to work on some pc 
       });
       const page = await browser.newPage();
-      await page.setDefaultNavigationTimeout(0); 
+      page.setDefaultNavigationTimeout(0);
       const renderedHtml = await ejs.renderFile('pdf/estimate.ejs', { project: project, items: items, labels: labels, formatDate: formatDate  });
-      await page.setContent(renderedHtml);
+      await page.setContent(renderedHtml, { waitUntil: "domcontentloaded", timeout: 0 });
       await page.waitForSelector('img', { timeout: 0 }); // すべての画像が読み込まれるのを待つ
       await page.emulateMediaType('screen');
       const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
-
       const encodedFileName = encodeURIComponent('見積書'+String(project.id).padStart(3, '0')+'_'+ project.client_name +'様.pdf');
       res.setHeader('Content-Disposition', `inline; filename*=UTF-8''${encodedFileName}`);
-
       res.contentType('application/pdf');
       res.send(pdfBuffer);
-
       await browser.close();
     });
   });
@@ -339,12 +334,12 @@ app.get('/invoice-pdf/:id', (req, res) => {
 
       // PUPPETEER
       const browser = await puppeteer.launch({
-        headless: 'new'
+        headless: false // false is needed to work on some pc 
       });
       const page = await browser.newPage();
-      await page.setDefaultNavigationTimeout(0); 
+      page.setDefaultNavigationTimeout(0); 
       const renderedHtml = await ejs.renderFile('pdf/invoice.ejs', { project: project, items: items, labels: labels, formatDate: formatDate  });
-      await page.setContent(renderedHtml);
+      await page.setContent(renderedHtml, { waitUntil: "domcontentloaded", timeout: 0 });
       await page.waitForSelector('img', { timeout: 0 }); // すべての画像が読み込まれるのを待つ
       await page.emulateMediaType('screen');
       const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
@@ -373,7 +368,7 @@ io.on('connection', (socket) => {
       process.exit(0); // ユーザーが切断されたら、プロセスを終了
       
     
-    }, 120* 1000); // 2分
+    }, 30 * 1000); // 30se
   });
 
   
