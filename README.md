@@ -30,15 +30,15 @@ Invoice Appは、案件やクライアントへの見積書・請求書を作成
 事前に
 - git
 - nodejs
-- wkhtmltopdf
+<!-- - wkhtmltopdf -->
 
-の３つがインストールされている必要があります。
+の2つがインストールされている必要があります。
 
-
+<!-- 
 0. wkhtmltopdfのインストール :
 [https://wkhtmltopdf.org/downloads.html](https://wkhtmltopdf.org/downloads.html)
 gitとnodejsのインストールは省略します。
-
+-->
 1. 好きなフォルダでリポジトリをクローン
 
 ```
@@ -84,7 +84,7 @@ npm run start
 - Express
 - SQLite
 - EJS
-- wkhtmltopdf
+- puppeteer
 
 ## ライセンス
 
