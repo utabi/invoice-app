@@ -66,8 +66,8 @@
             <td class="text-center"><%= project.is_canceled ? 'キャンセル' : '' %></td>
             <td>¥<%= project.total_amount_with_tax.toLocaleString() %>-</td>
             <td class="nowrap">
-              <a href="/edit/<%= project.id %>" class="btn btn-outline-primary mb-1"><%= labels.edit %></a>
-              <a href="/clone/<%= project.id %>" class="btn btn-secondary mb-1"><%= labels.clone %></a>
+              <a href="/edit/<%= project.id %>" class="btn btn-outline-primary"><%= labels.edit %></a>
+              <a href="/clone/<%= project.id %>" class="btn btn-secondary"><%= labels.clone %></a>
               <button type="button" class="btn btn-primary" onclick="window.open('/estimate-pdf/<%= project.id %>')" <%= project.estimate_date ? '' : 'disabled' %>><%= labels.estimate %></button>
               <button type="button" class="btn btn-primary" onclick="window.open('/invoice-pdf/<%= project.id %>')" <%= project.invoice_date ? '' : 'disabled' %>><%= labels.invoice %></button>
             </td>

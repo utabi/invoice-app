@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const ejs = require('ejs');
 const puppeteer = require('puppeteer');
+// const { Cluster } = require('puppeteer-cluster');
 // const wkhtmltopdf = require('wkhtmltopdf');
 
 const open = require('opn');
@@ -16,6 +17,39 @@ const io = require('socket.io')(server);
 const port = 8000;
 const default_tax = 0.1;
 
+const wait = async (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+// // Declare global cluster
+// let cluster;
+
+// // Initialize Puppeteer Cluster and store it in the global variable
+// (async () => {
+//   cluster = await Cluster.launch({
+//     concurrency: Cluster.CONCURRENCY_CONTEXT,
+//     maxConcurrency: 2,  // adjust based on your system
+//     puppeteerOptions: {
+//       headless: true // false is needed to work on some pc 
+//     },
+//   });
+
+//   cluster.on('taskerror', (err, data) => {
+//     console.log(`  Error crawling ${data}: ${err.message}`);
+//   });
+// })();
+// let browser;
+
+// // This async function initializes the browser
+// const initializeBrowser = async () => {
+//     try {
+//         browser = await puppeteer.launch({
+//             headless: false // false is needed to work on some pc
+//         });
+//     } catch (error) {
+//         console.error(`Failed to create a browser instance : ${error}`);
+//     }
+// };
+
+// initializeBrowser();
 
 // DB connection
 const db = new sqlite3.Database('./database.sqlite3', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
@@ -24,6 +58,7 @@ const db = new sqlite3.Database('./database.sqlite3', sqlite3.OPEN_READWRITE | s
   }
   console.log('Connected to the database.');
 });
+
 
 // Setup
 // app.use(express.urlencoded({ extended: false }));
@@ -265,96 +300,136 @@ app.get('/clone/:id', (req, res) => {
 });
 
 
-app.get('/estimate-pdf/:id', (req, res) => {
+app.get('/estimate-pdf/:id', async (req, res) => {
   const projectId = req.params.id;
   
-  db.get("SELECT * FROM projects WHERE id = ?", [projectId], async (err, project) => {
-    if (err) {
-      console.error(err.message);
-      res.status(500).send("Error retrieving project from database.");
-      return;
+  try {
+    const project = await new Promise((resolve, reject) => {
+      db.get("SELECT * FROM projects WHERE id = ?", [projectId], (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
+    });
+
+    const items = await new Promise((resolve, reject) => {
+      db.all("SELECT * FROM items WHERE project_id = ?", [projectId], (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
+    });
+
+    let retryCount = 0;
+    let success = false;
+    while (!success && retryCount < 5) {
+      try {
+        
+        const browser = await puppeteer.launch({ headless: false });
+        const page = await browser.newPage();
+        page.setDefaultNavigationTimeout(0);
+
+        const renderedHtml = await ejs.renderFile('pdf/estimate.ejs', { project: project, items: items, labels: labels, formatDate: formatDate  });
+        // await wait(500);
+
+        await page.setContent(renderedHtml, { waitUntil: ['domcontentloaded', 'networkidle0', 'networkidle2'], timeout: 0 });
+        await page.waitForSelector('img', { timeout: 0 }); 
+
+        await page.emulateMediaType('screen');
+        const pdfBuffer = await page.pdf({ format: 'A4', timeout: 0  });
+
+        const encodedFileName = encodeURIComponent('見積書'+String(project.id).padStart(3, '0')+'_'+ project.client_name +'様.pdf');
+        res.setHeader('Content-Disposition', `inline; filename*=UTF-8''${encodedFileName}`);
+        console.log("m14")
+        res.contentType('application/pdf');
+        res.send(pdfBuffer);
+
+        await page.close();
+        await browser.close();
+
+        success = true; // PDF作成が成功したらループを抜ける
+      } catch (error) {
+        console.error(error);
+        retryCount++;
+        console.log(`PDF creation failed. Retry attempt ${retryCount}...`);
+      }
     }
 
-    db.all("SELECT * FROM items WHERE project_id = ?", [projectId], async (err, items) => {
-      if (err) {
-        console.error(err.message);
-        res.status(500).send("Error retrieving items from database.");
-        return;
-      }
-
-      // wkhtmltopdf
-      // const renderedHtml = await ejs.renderFile('pdf/estimate.ejs', { project: project, items: items, labels: labels, formatDate: formatDate  });
-
-      // res.contentType("application/pdf");
-      // wkhtmltopdf(renderedHtml, { pageSize: 'A4' }).pipe(res);
-      // PUPPETEER
-      const browser = await puppeteer.launch({
-        headless: false // false is needed to work on some pc 
-      });
-      const page = await browser.newPage();
-      page.setDefaultNavigationTimeout(0);
-      const renderedHtml = await ejs.renderFile('pdf/estimate.ejs', { project: project, items: items, labels: labels, formatDate: formatDate  });
-      await page.setContent(renderedHtml, { waitUntil: "domcontentloaded", timeout: 0 });
-      await page.waitForSelector('img', { timeout: 0 }); // すべての画像が読み込まれるのを待つ
-      await page.emulateMediaType('screen');
-      const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
-      const encodedFileName = encodeURIComponent('見積書'+String(project.id).padStart(3, '0')+'_'+ project.client_name +'様.pdf');
-      res.setHeader('Content-Disposition', `inline; filename*=UTF-8''${encodedFileName}`);
-      res.contentType('application/pdf');
-      res.send(pdfBuffer);
-      await browser.close();
-    });
-  });
-  
+    if (!success) {
+      throw new Error('PDF creation failed after 5 attempts.');
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error');
+  }
 });
 
-app.get('/invoice-pdf/:id', (req, res) => {
+
+
+app.get('/invoice-pdf/:id', async (req, res) => {
   const projectId = req.params.id;
   
-  db.get("SELECT * FROM projects WHERE id = ?", [projectId], async (err, project) => {
-    if (err) {
-      console.error(err.message);
-      res.status(500).send("Error retrieving project from database.");
-      return;
-    }
-
-    db.all("SELECT * FROM items WHERE project_id = ?", [projectId], async (err, items) => {
-      if (err) {
-        console.error(err.message);
-        res.status(500).send("Error retrieving items from database.");
-        return;
-      }
-
-
-      // wkhtmltopdf
-      // const renderedHtml = await ejs.renderFile('pdf/invoice.ejs', { project: project, items: items, labels: labels, formatDate: formatDate  });
-
-      // res.contentType("application/pdf");
-      // wkhtmltopdf(renderedHtml, { pageSize: 'A4' }).pipe(res);
-
-      // PUPPETEER
-      const browser = await puppeteer.launch({
-        headless: false // false is needed to work on some pc 
+  try {
+    // DB操作をPromiseでラップして、async/awaitと共に使用します
+    const project = await new Promise((resolve, reject) => {
+      db.get("SELECT * FROM projects WHERE id = ?", [projectId], (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
       });
-      const page = await browser.newPage();
-      page.setDefaultNavigationTimeout(0); 
-      const renderedHtml = await ejs.renderFile('pdf/invoice.ejs', { project: project, items: items, labels: labels, formatDate: formatDate  });
-      await page.setContent(renderedHtml, { waitUntil: "domcontentloaded", timeout: 0 });
-      await page.waitForSelector('img', { timeout: 0 }); // すべての画像が読み込まれるのを待つ
-      await page.emulateMediaType('screen');
-      const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
-
-      const encodedFileName = encodeURIComponent('請求書'+String(project.id).padStart(3, '0')+'_'+ project.client_name +'様.pdf');
-      res.setHeader('Content-Disposition', `inline; filename*=UTF-8''${encodedFileName}`);
-
-      res.contentType('application/pdf');
-      res.send(pdfBuffer);
-
-      await browser.close();
     });
-  });
-  
+
+    const items = await new Promise((resolve, reject) => {
+      db.all("SELECT * FROM items WHERE project_id = ?", [projectId], (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
+    });
+    
+    let retryCount = 0;
+    let success = false;
+    while (!success && retryCount < 5) {
+      try {
+        const browser = await puppeteer.launch({ headless: false });
+        const page = await browser.newPage();
+        page.setDefaultNavigationTimeout(0);
+        const renderedHtml = await ejs.renderFile('pdf/invoice.ejs', { project: project, items: items, labels: labels, formatDate: formatDate  });
+        // await wait(500);
+        await page.setContent(renderedHtml, { waitUntil: ['domcontentloaded', 'networkidle0', 'networkidle2'], timeout: 0 });
+        await page.waitForSelector('img', { timeout: 0 }); 
+        
+        await page.emulateMediaType('screen');
+        const pdfBuffer = await page.pdf({ format: 'A4', timeout: 0  });
+        
+        const encodedFileName = encodeURIComponent('請求書'+String(project.id).padStart(3, '0')+'_'+ project.client_name +'様.pdf');
+        res.setHeader('Content-Disposition', `inline; filename*=UTF-8''${encodedFileName}`);
+        res.contentType('application/pdf');
+        res.send(pdfBuffer);
+        await page.close();
+        await browser.close();
+        success = true; // PDF作成が成功したらループを抜ける
+      } catch (error) {
+        console.error(error);
+        retryCount++;
+        console.log(`PDF creation failed. Retry attempt ${retryCount}...`);
+      }
+    }
+      
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error');
+  }
 });
+
 
 let quit_timer;
 
