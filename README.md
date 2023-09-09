@@ -15,10 +15,11 @@ Invoice Appは、案件やクライアントへの見積書・請求書を作成
 - ドラッグ&ドロップで項目の順序を変更
 
 ## 修正履歴
-
+- [2023.9.10] 適格請求書発行事業者登録番号の追加
+- [2023.6.25] ポートを3001から8000へ
 - [2023.4.7] ページを閉じたら2分後にサーバが自動終了しるように変更
 - [2023.4.7] 自動起動用 start.command (Mac用) 追加
-- [2023.6.25] ポートを3001から8000へ
+
 <!-- - [2023.6.23] puppeteerが不安定なので、wkhtmltopdfに変更 -->
 
 ## TODO
@@ -77,6 +78,7 @@ npm run start
 - 振込先は [/src/pdf/_account.ejs](/src/pdf/_account.ejs) を編集
 - 会社（事業主）の情報は [/src/public/company_sign.png](/src/public/company_sign.png) を自分で作成 
 （または[/src/pdf/_company.ejs](/src/pdf/_company.ejs) を編集）
+- 適格請求書発行事業者登録番号は[/src/pdf/_company.ejs](/src/pdf/_company.ejs)を編集
 - 請求書のデザインは [/src/pdf/_pdf.css](/src/pdf/_pdf.css) を編集
 
 ## テクノロジー
