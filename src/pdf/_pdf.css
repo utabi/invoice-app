@@ -34,8 +34,12 @@ body {
   .client-info p { font-size:12px; line-height: 1.8em;  }
   .client-info .price { font-size: 26px; line-height: 1.8em; }
 
-  #company_logo { position: absolute; right:5%; top: 10%; }
-  
+  #my-company {
+    position: absolute; right:5%; top: 10%; 
+  }
+  #my-company .number h4 { font-size: 12px; margin:0; font-weight: normal; text-align: right; }
+  #my-company .number p { font-size: 12px; margin:0; text-align: right; }
+
   
   table {
     width: 100%; font-size: 12px; 
