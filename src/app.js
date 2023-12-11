@@ -430,6 +430,28 @@ app.get('/invoice-pdf/:id', async (req, res) => {
   }
 });
 
+app.get('/export-csv', function(req, res) {
+  // is_canceledが0のデータのみ選択し、指定されたカラムを出力
+  db.all("SELECT id, client_name, project_name, invoice_date, estimate_date, is_completed, total_amount, total_amount_with_tax, tax FROM projects WHERE is_canceled = 0", [], (err, rows) => {
+      if (err) {
+          res.status(500).send('データベースのエラーが発生しました');
+          return;
+      }
+      let csvData = '\uFEFF';
+      // CSV形式でデータを整形
+      csvData += 'ID,クライアント名,プロジェクト名,請求日,見積日,完了状態,合計金額,税込合計金額,税率,消費税\n'; // ヘッダー行
+      rows.forEach(row => {
+          // 税込合計金額 - 合計金額 を計算
+          const taxAmount = row.total_amount_with_tax - row.total_amount;
+          csvData += `${row.id},${row.client_name},${row.project_name},${row.invoice_date},${row.estimate_date},${row.is_completed},${row.total_amount},${row.total_amount_with_tax},${row.tax},${taxAmount}\n`;
+      });
+
+      // CSVファイルとしてクライアントに送信
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader('Content-Disposition', 'attachment; filename="export.csv"');
+      res.send(csvData);
+  });
+});
 
 let quit_timer;
 

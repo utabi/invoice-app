@@ -78,6 +78,29 @@
       </tbody>
     </table>
     <a href="/new" class="btn btn-secondary"><%= labels.create_new %></a>
+    <button id="csvExportBtn" class="btn btn-primary">CSV出力</button>
+
   </div>
+  <script>
+    document.getElementById('csvExportBtn').addEventListener('click', function() {
+        // CSV出力のリクエストをサーバーに送信
+        fetch('/export-csv', {
+            method: 'GET'
+        })
+        .then(response => response.blob())
+        .then(blob => {
+            // ダウンロード用のURLを生成してダウンロードを実行
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'export.csv';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        })
+        .catch(error => console.error('CSV出力に失敗しました:', error));
+    });
+  </script>
 </body>
 </html>
